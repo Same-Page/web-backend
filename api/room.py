@@ -11,7 +11,7 @@ from sp_token.tokens import refresh_user_data
 
 room_api = Blueprint("Room", __name__)
 
-CREATE_ROOM_COST = 60
+CREATE_ROOM_COST = 0
 
 
 @room_api.route("/api/v1/rooms", methods=["GET"])
@@ -57,10 +57,15 @@ def create_room(user=None):
 
     u.credit = u.credit - CREATE_ROOM_COST
 
-    name = request.form.get("name")
-    about = request.form.get("about")
-    room = Room(name=name, about=about, owner=u.id)
+    # name = request.form.get("name")
+    # about = request.form.get("about")
+
+    room = Room(owner=u.id, **request.form)
+    # room = Room(name=name, about=about, owner=u.id)
+
     db.session.add(room)
+    db.session.commit()
+    u.room = f'{u.room},{room.id}'
     db.session.commit()
 
     token = request.headers.get("token")

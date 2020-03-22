@@ -1,9 +1,11 @@
+import os
+
 DB = {
     "driver": "mysql+pymysql",
-    "user": "user",
-    "password": "password",
-    "host": "your.db.host",
-    "db": "your.db.name",
+    "user": os.environ['MYSQL_USER'],
+    "password": os.environ['MYSQL_PASSWORD'],
+    "host": os.environ['MYSQL_HOST'],
+    "db": os.environ['MYSQL_DB'],
 }
 
 DB_URI = "{driver}://{user}:{password}@{host}/{db}?charset=utf8mb4".format(
