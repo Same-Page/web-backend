@@ -17,8 +17,12 @@ CREATE_ROOM_COST = 0
 @room_api.route("/api/v1/rooms", methods=["GET"])
 @get_user_from_token(required=False)
 def get_rooms(user=None):
-    res = db.session.query(Room, User).join(
-        User).filter(Room.active == True).all()
+    room_owner_id = request.args.get('userId')
+    query = db.session.query(Room, User).join(
+        User).filter(Room.active == True)
+    if room_owner_id:
+        query = query.filter(Room.owner == room_owner_id)
+    res = query.all()
     rooms = []
     for room, user in res:
         room_data = room.to_dict()
@@ -65,7 +69,10 @@ def create_room(user=None):
 
     db.session.add(room)
     db.session.commit()
-    u.room = f'{u.room},{room.id}'
+    if u.room:
+        u.room = f'{u.room},{room.id}'
+    else:
+        u.room = room.id
     db.session.commit()
 
     token = request.headers.get("token")

@@ -36,7 +36,9 @@ class User(db.Model):
         else:
             avatar_id = self.id % 150
             avatar_src = f"{cloud_front}avatar/{avatar_id}.jpg"
-
+        rooms = []
+        if self.room:
+            rooms = self.room.split(',')
         return {
             # From now on, uuid will be same as number id
             # only return uuid to frontend
@@ -52,5 +54,5 @@ class User(db.Model):
             "isBanned": self.is_banned(),
             "avatarSrc": avatar_src,
             "mode": self.mode,
-            "room": self.room
+            "rooms": rooms
         }
