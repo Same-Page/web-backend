@@ -56,6 +56,22 @@ def get_site_to_rooms(user=None):
 def create_room(user=None):
 
     u = User.query.filter_by(id=user['numId']).first()
+    existing_room_id = request.form.get("roomId")
+    if (existing_room_id):
+        # todo: check if real owner of the room
+        room = Room.query.filter_by(id=existing_room_id).first()
+        if room.owner != u.id:
+            return 403
+        room.name = request.form.get("name")
+        room.about = request.form.get("about")
+        room.background = request.form.get("background")
+        room.cover = request.form.get("cover")
+        room.media = request.form.get("media")
+        db.session.commit()
+        res = room.to_dict()
+        res['owner'] = u.to_dict()
+        return jsonify(res)
+
     if u.credit < CREATE_ROOM_COST:
         return 'low credit', 402
 
@@ -77,4 +93,4 @@ def create_room(user=None):
 
     token = request.headers.get("token")
     refresh_user_data(token, u)
-    return "success"
+    return jsonify(room.to_dict())

@@ -49,5 +49,6 @@ class Room(db.Model):
             "background": self.background,
             "cover": self.cover,
             "media": media_list,
+            "mediaRaw": self.media,
             "type": 'room'
         }

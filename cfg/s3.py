@@ -1,1 +1,2 @@
-S3_BUCKET = "your.s3.bucket.name"
+import os
+S3_BUCKET = os.environ['S3_BUCKET']
