@@ -1,7 +1,12 @@
 import datetime
+import re
+import logging
 
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+
 from models import db
+
+logger = logging.getLogger(__name__)
 
 
 class Room(db.Model):
@@ -25,21 +30,27 @@ class Room(db.Model):
 
         if self.media:
             media_list = []
-            for src in self.media.split():
-                media_type = 'video/mp4'
-                if 'youtube.com' in src or 'youtu.be' in src:
-                    media_type = 'video/youtube'
-                media_list.append({
-                    'sources': [
-                        {
-                            'src': src,
-                            'type': media_type
-                        }
-                    ]
-                })
-
+            try:
+                for m in self.media.split():
+                    media_src = re.search(r"\((.*?)\)", m).group(1)
+                    media_name = re.search(r"\[(.*?)\]", m).group(1)
+                    media_type = 'video/mp4'
+                    if 'youtube.com' in media_src or 'youtu.be' in media_src:
+                        media_type = 'video/youtube'
+                    media_list.append({
+                        'name': media_name,
+                        'sources': [
+                            {
+                                'src': media_src,
+                                'type': media_type
+                            }
+                        ]
+                    })
+            except:
+                logger.exception(f'failed to parse media for room {self.id}')
         else:
             media_list = None
+
         return {
             "id": self.id,
             "owner": self.owner,
