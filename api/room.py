@@ -11,7 +11,7 @@ from sp_token.tokens import refresh_user_data
 
 room_api = Blueprint("Room", __name__)
 
-CREATE_ROOM_COST = 0
+CREATE_ROOM_COST = 10
 
 
 @room_api.route("/api/v1/rooms", methods=["GET"])
