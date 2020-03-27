@@ -18,7 +18,7 @@ class User(db.Model):
     block_until = Column(DateTime)
     create_time = Column(DateTime, default=datetime.datetime.utcnow)
     last_checkin = Column(DateTime, default=datetime.datetime.utcnow)
-    room = db.Column(db.String(50), default="5")
+    room = db.Column(db.String(50))
     mode = db.Column(db.String(20), default="site")
 
     def __repr__(self):
