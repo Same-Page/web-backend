@@ -31,6 +31,17 @@ def get_rooms(user=None):
     return jsonify(rooms)
 
 
+@room_api.route("/api/v1/room/<room_id>", methods=["GET"])
+@get_user_from_token(required=False)
+def get_room(room_id, user=None):
+    room, user = db.session.query(Room, User).join(
+        User).filter(Room.id == room_id).first()
+
+    room_data = room.to_dict()
+    room_data['owner'] = user.to_dict()
+    return jsonify(room_data)
+
+
 @room_api.route("/api/v1/site_to_rooms", methods=["GET"])
 @get_user_from_token(required=False)
 def get_site_to_rooms(user=None):
